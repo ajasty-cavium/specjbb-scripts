@@ -9,10 +9,11 @@
 
 # Launch command: java [options] -jar specjbb2015.jar [argument] [value] ...
 #WORKERS=4
+WORKERS=$1
 # Benchmark options (-Dproperty=value to override the default and property file value)
 # Please add -Dspecjbb.controller.host=$CTRL_IP (this host IP) and -Dspecjbb.time.server=true
 # when launching Composite mode in virtual environment with Time Server located on the native host.
-SPEC_OPTS="-Dspecjbb.forkjoin.workers=$1"
+SPEC_OPTS="-Dspecjbb.forkjoin.workers=$WORKERS"
 
 # Java options for Composite JVM
 #JAVA_OPTS="-addmods ALL-SYSTEM"
@@ -34,6 +35,8 @@ NUM_OF_RUNS=1
 ###############################################################################
 
 JAVA=java
+
+TASKSET="taskset -c 0-95,128-223"
 
 which $JAVA > /dev/null 2>&1
 if [ $? -ne 0 ]; then
@@ -60,7 +63,7 @@ for ((n=1; $n<=$NUM_OF_RUNS; n=$n+1)); do
   echo
 
   echo "Start Composite JVM"
-  $JAVA $JAVA_OPTS $SPEC_OPTS -jar ../specjbb2015.jar -m COMPOSITE $MODE_ARGS 2>composite.log > composite.out &
+  $TASKSET $JAVA $JAVA_OPTS $SPEC_OPTS -jar ../specjbb2015.jar -m COMPOSITE $MODE_ARGS 2>composite.log > composite.out &
 
     COMPOSITE_PID=$!
     echo "Composite JVM PID = $COMPOSITE_PID"

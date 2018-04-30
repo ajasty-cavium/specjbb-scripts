@@ -36,7 +36,7 @@ NUM_OF_RUNS=1
 
 JAVA=java
 
-TASKSET="taskset -c 0-95,128-223"
+TASKSET="taskset -a -c 0-210"
 
 which $JAVA > /dev/null 2>&1
 if [ $? -ne 0 ]; then
